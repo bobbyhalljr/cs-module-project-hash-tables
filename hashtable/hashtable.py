@@ -22,7 +22,8 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
-
+        self.capacity = capacity
+        self.storage = [None] * capacity
 
     def get_num_slots(self):
         """
@@ -34,7 +35,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        for i in self.storage:
+            if self.storage is None:
+                return None
+            else:
+                self.storage[i]
 
 
     def get_load_factor(self):
@@ -43,7 +48,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        load_factor = self.storage / self.capacity
+        return load_factor
+            
 
 
     def fnv1(self, key):
@@ -63,6 +70,10 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash =((hash << 5) + hash) + ord(x)
+        return hash
 
 
     def hash_index(self, key):
@@ -80,9 +91,27 @@ class HashTable:
         Hash collisions should be handled with Linked List Chaining.
 
         Implement this.
-        """
-        # Your code here
-
+        """        
+        # count
+        count = 0
+        # hash key
+        index = self.hash_index(key)
+        # check if the key exsists
+        if self.storage[index] is not None:
+            # loop through array, if key is found update it
+            for v in self.storage[index]:
+                prev = self.storage[index]
+                if v[0] == key:
+                    v[1] = value
+                    break
+            # else no key found, add to the end of array
+            else:
+                self.storage[index].append([key, value])
+        # else no key found, create new array add key/value pairs
+        else:
+            self.storage[index] = []
+            self.storage[index].append([key, value])
+            
 
     def delete(self, key):
         """
@@ -93,6 +122,20 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        
+        # hash index
+        index = self.hash_index(key)
+        # check if capacity is empty
+        if self.storage is None:
+            raise KeyError()
+        else:
+            # loop through array
+            for v in self.storage[index]:
+                # check if key exsits
+                if v[0] == key:
+                    self.storage[index] = None
+                else:
+                    print("Warning: Key not found")
 
 
     def get(self, key):
@@ -104,6 +147,19 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # hash index
+        index = self.hash_index(key)
+        # check if capacity is empty
+        if self.storage[index] is None:
+            return None
+        else:
+            # loop through array
+            for v in self.storage[index]:
+                # check if key exsists
+                if v[0] == key:
+                    return v[1]
+                else:
+                    None
 
 
     def resize(self, new_capacity):
@@ -135,19 +191,19 @@ if __name__ == "__main__":
 
     print("")
 
-    # Test storing beyond capacity
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # # Test storing beyond capacity
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    # # Test resizing
+    # old_capacity = ht.get_num_slots()
+    # ht.resize(ht.capacity * 2)
+    # new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # Test if data intact after resizing
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # # Test if data intact after resizing
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    print("")
+    # print("")
