@@ -24,6 +24,7 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.storage = [None] * capacity
+        self.nums = 0
 
     def get_num_slots(self):
         """
@@ -35,11 +36,7 @@ class HashTable:
 
         Implement this.
         """
-        for i in self.storage:
-            if self.storage is None:
-                return None
-            else:
-                self.storage[i]
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -48,7 +45,9 @@ class HashTable:
 
         Implement this.
         """
-        load_factor = self.storage / self.capacity
+        
+        
+        load_factor = self.nums / self.capacity
         return load_factor
             
 
@@ -92,26 +91,32 @@ class HashTable:
 
         Implement this.
         """        
-        # count
-        count = 0
         # hash key
-        index = self.hash_index(key)
-        # check if the key exsists
-        if self.storage[index] is not None:
-            # loop through array, if key is found update it
-            for v in self.storage[index]:
-                prev = self.storage[index]
-                if v[0] == key:
-                    v[1] = value
-                    break
-            # else no key found, add to the end of array
-            else:
-                self.storage[index].append([key, value])
-        # else no key found, create new array add key/value pairs
-        else:
-            self.storage[index] = []
-            self.storage[index].append([key, value])
-            
+        index = self.hash_index(key)        
+        items = 0
+        
+        for item in self.storage:
+            if item is not None:
+                items += 1
+        return items > len(self.storage) / 2
+        
+        # check if key is present
+        # if self.storage[index][0] == key
+        
+        # if storage is empty
+        # if node is None:
+        #     self.storage[index] = HashTableEntry(key, value)
+        #     return None
+        # # insert into linked list
+        # prev = node
+        # # while storage is not empty
+        # while node is not None:
+        #     if node[0] == key:
+        #         node[0] = key
+        #     prev = node
+        #     node = node.next
+        # prev.next = HashTableEntry(key, value)
+        # self.nums += 1
 
     def delete(self, key):
         """
@@ -125,17 +130,33 @@ class HashTable:
         
         # hash index
         index = self.hash_index(key)
-        # check if capacity is empty
-        if self.storage is None:
-            raise KeyError()
+        # if sotrage is not empty
+        if self.storage[index] is not None:
+            # if the hashed key is found in index 0
+            if self.storage[index] == key:
+                return 
+            else:
+                node = self.storage[index]
+                # while array is not empty
+                while node is None and node.key != key:
+                    # pointer to to prev node
+                    prev = node
+                    node = node.next
+                    # if node is empty
+                    if node is None:
+                        return 
+                    # else node is not empty
+                    else:
+                        self.nums -= 1
+                        result = node.value
+                    if prev is None:
+                        node = None
+                    else:
+                        prev.next = node.next.next
+                    return result
         else:
-            # loop through array
-            for v in self.storage[index]:
-                # check if key exsits
-                if v[0] == key:
-                    self.storage[index] = None
-                else:
-                    print("Warning: Key not found")
+            print("WARNING: key not found!")
+        
 
 
     def get(self, key):
@@ -149,17 +170,13 @@ class HashTable:
         # Your code here
         # hash index
         index = self.hash_index(key)
-        # check if capacity is empty
-        if self.storage[index] is None:
+        node = self.storage[index]
+        while node is not None and node.key != key:
+            node = node.next
+        if node is None:
             return None
         else:
-            # loop through array
-            for v in self.storage[index]:
-                # check if key exsists
-                if v[0] == key:
-                    return v[1]
-                else:
-                    None
+            return node.value
 
 
     def resize(self, new_capacity):
@@ -169,7 +186,16 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        old_storage = self.storage
+        self.capacity *= 2
+        self.storage = [None] * self.capacity
+        curr = None
+        
+        for item in old_storage:
+            curr = item
+            while curr is not None:
+                self.put(curr.key, curr.value)
+                curr = curr.next
 
 
 
